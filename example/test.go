@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"github.com/influxdata/influxql"
+	"github.com/willena/influxql-query-builder"
 	"time"
 )
 
@@ -10,7 +11,24 @@ func main() {
 
 	//s := influxql.StringLiteral{Val: "TestField"}
 
-	InfluxQlWrapper()
+	//s, err := influxql.ParseStatement("SELECT toto, titi FROM a WHERE a = 'r'; DROP MEASUREMENT kkk'")
+	//
+	//
+	//fmt.Println(s)
+	//fmt.Println(err)
+	//
+	//s2 := influxql.MustParseExpr("A >= rt',;ja AND T < 15h")
+	//fmt.Println(s2)
+
+	q, err := influxql.ParseStatement("SELECT \"toto\" FROM \"uuu\"")
+
+	f := influxql.Field{Expr: &influxql.VarRef{Val: "Tot\"o", Type: influxql.String}}
+
+	fmt.Println(f.String())
+	fmt.Println(q, err)
+	fmt.Println(&influxql.Measurement{Name: "r\"fjf"})
+
+	//InfluxQlWrapper()
 	//influxQLTest()
 }
 
@@ -18,27 +36,24 @@ func InfluxQlWrapper() {
 
 	dur, _ := time.ParseDuration("15h")
 
-	builder := NewQueryBuilder()
+	builder := influxqb.NewQueryBuilder()
 	builder.Select(
-		&Function{Name: "MEAN", Args: []interface{}{"colomn", time.Now(), 45.36, dur}},
-		&Field{Name: "MyField"},
-		&Math{Expr: []interface{}{
-			"COL", influxql.ADD, 156, influxql.MUL, influxql.LPAREN, "COL2", influxql.MOD, 12, influxql.RPAREN,
-		}},
+		&influxqb.Function{Name: "MEAN", Args: []interface{}{"colomn", time.Now(), 45.36, dur}},
+		&influxqb.Field{Name: "MyField"},
 	)
 	builder.From("XTC_OLD'sk")
 	//builder.FromRegex(regexp.MustCompile(`^\d+(ns|u|ms|s|m|h|d|w)?$`))
 	builder.GroupBy(
-		&Field{Name: "GroupByField"},
-		&TimeSampling{interval: dur},
+		&influxqb.Field{Name: "GroupByField"},
+		&influxqb.TimeSampling{Interval: dur},
 	)
-	builder.Fill(FillNumber{45})
+	builder.Fill(influxqb.FillNumber{45})
 	builder.Limit(250)
 	builder.Offset(15)
 	builder.SeriesLimit(2)
 	builder.SeriesOffset(8)
-
-	//TODO: Add
+	builder.Where(
+		&influxqb.Math{Expr: []interface{}{influxqb.Field{Name: "Tptp"}, influxql.EQ, "data", influxql.AND, "ooo", influxql.EQ, 16.55}})
 
 	fmt.Println(builder.Build())
 }

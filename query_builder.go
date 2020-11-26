@@ -1,23 +1,27 @@
-package main
+package influxqb
 
 import (
 	"fmt"
 	"github.com/influxdata/influxql"
 	"regexp"
+	"strconv"
+	"strings"
 	"time"
 )
+
+var ()
 
 type FillOption interface {
 	get() (influxql.FillOption, interface{})
 }
 
-type FillNoFill struct {}
+type FillNoFill struct{}
 type FillNumber struct {
-	value int
+	Value float64
 }
-type FillNull struct {}
-type FillPrevious struct {}
-type FillLinear struct {}
+type FillNull struct{}
+type FillPrevious struct{}
+type FillLinear struct{}
 
 func (receiver FillNoFill) get() (influxql.FillOption, interface{}) {
 	return influxql.NoFill, nil
@@ -32,13 +36,8 @@ func (receiver FillPrevious) get() (influxql.FillOption, interface{}) {
 	return influxql.PreviousFill, nil
 }
 func (receiver FillNumber) get() (influxql.FillOption, interface{}) {
-	return influxql.NumberFill, receiver.value
+	return influxql.NumberFill, receiver.Value
 }
-
-
-
-
-
 
 type FieldIf interface {
 	field() *influxql.Field
@@ -48,14 +47,27 @@ type GroupByIf interface {
 	groupBy() *influxql.Dimension
 }
 
+type MathExprIf interface {
+	expr() *influxql.ParenExpr
+}
+
+type Wildcard struct {
+	FieldIf
+}
+
+func (w *Wildcard) field() *influxql.Field {
+	return &influxql.Field{Expr: &influxql.Wildcard{}}
+}
+
 type Field struct {
 	FieldIf
 	Name  string
 	Alias string
+	Type  influxql.DataType
 }
 
 func (f *Field) field() *influxql.Field {
-	return &influxql.Field{Expr: &influxql.StringLiteral{Val: f.Name}, Alias: f.Alias}
+	return &influxql.Field{Expr: &influxql.VarRef{Val: f.Name, Type: f.Type}, Alias: f.Alias}
 }
 
 func (f *Field) groupBy() *influxql.Dimension {
@@ -64,13 +76,13 @@ func (f *Field) groupBy() *influxql.Dimension {
 
 type TimeSampling struct {
 	GroupByIf
-	interval time.Duration
+	Interval time.Duration
 }
 
 func (s *TimeSampling) groupBy() *influxql.Dimension {
 	f := &Function{
 		Name: "time",
-		Args: []interface{}{s.interval},
+		Args: []interface{}{s.Interval},
 	}
 	return &influxql.Dimension{Expr: f.field().Expr}
 }
@@ -120,6 +132,11 @@ func (f *Function) field() *influxql.Field {
 			args = append(args, &influxql.TimeLiteral{Val: a.(time.Time)})
 		case time.Duration:
 			args = append(args, &influxql.DurationLiteral{Val: a.(time.Duration)})
+		case influxql.Expr:
+			args = append(args, a.(influxql.Expr))
+		case *Field:
+			f := a.(*Field)
+			args = append(args, &influxql.VarRef{Val: f.Name, Type: f.Type})
 		default:
 			//If not a number or string or time
 		}
@@ -134,6 +151,193 @@ func (f *Function) field() *influxql.Field {
 	}
 }
 
+func toExpr(a interface{}) []interface{} {
+	ret := make([]interface{}, 0)
+
+	var floatval float64
+	switch a.(type) {
+	case int:
+		floatval = float64(a.(int))
+		return append(ret, &influxql.NumberLiteral{Val: floatval})
+	case int8:
+		floatval = float64(a.(int8))
+		return append(ret, &influxql.NumberLiteral{Val: floatval})
+	case int16:
+		floatval = float64(a.(int16))
+		return append(ret, &influxql.NumberLiteral{Val: floatval})
+	case int32:
+		floatval = float64(a.(int32))
+		return append(ret, &influxql.NumberLiteral{Val: floatval})
+	case int64:
+		floatval = float64(a.(int64))
+		return append(ret, &influxql.NumberLiteral{Val: floatval})
+	case uint:
+		floatval = float64(a.(uint))
+		return append(ret, &influxql.NumberLiteral{Val: floatval})
+	case uint8:
+		floatval = float64(a.(uint8))
+		return append(ret, &influxql.NumberLiteral{Val: floatval})
+	case uint16:
+		floatval = float64(a.(uint16))
+		return append(ret, &influxql.NumberLiteral{Val: floatval})
+	case uint32:
+		floatval = float64(a.(uint32))
+		return append(ret, &influxql.NumberLiteral{Val: floatval})
+	case uint64:
+		floatval = float64(a.(uint64))
+		return append(ret, &influxql.NumberLiteral{Val: floatval})
+	case float32:
+		floatval = float64(a.(float32))
+		return append(ret, &influxql.NumberLiteral{Val: floatval})
+	case float64:
+		floatval = a.(float64)
+		return append(ret, &influxql.NumberLiteral{Val: floatval})
+	case string:
+		return append(ret, &influxql.StringLiteral{Val: a.(string)})
+	case time.Time:
+		return append(ret, &influxql.TimeLiteral{Val: a.(time.Time)})
+	case *time.Time:
+		var tmp time.Time
+		tmp = (*(a.(*time.Time)))
+		return append(ret, &influxql.TimeLiteral{Val: tmp})
+	case time.Duration:
+		return append(ret, &influxql.DurationLiteral{Val: a.(time.Duration)})
+	case Field:
+		field := a.(Field)
+		return append(ret, &influxql.VarRef{Val: field.Name, Type: field.Type})
+	case Parenthesis:
+		t := a.(*Parenthesis).compute()
+		return append(ret, &influxql.ParenExpr{Expr: t})
+	case influxql.Expr:
+		return append(ret, a)
+	default:
+		return ret
+	}
+
+}
+
+type Parenthesis struct {
+	Expr []interface{}
+}
+
+func (p *Parenthesis) findParenthesis() (int, int) {
+	parenOpened := 0
+	firtOpen := -1
+	//lastClose := - 1
+	for i, v := range p.Expr {
+		//fmt.Print(v)
+		switch v.(type) {
+		case influxql.Token:
+			token := v.(influxql.Token)
+			if token == influxql.LPAREN {
+				if firtOpen == -1 {
+					firtOpen = i
+				}
+				parenOpened++
+			} else if token == influxql.RPAREN {
+				parenOpened--
+				if parenOpened < 0 {
+					fmt.Println("Math expression not valid")
+				}
+
+				if parenOpened == 0 {
+					return firtOpen, i
+				}
+
+			}
+		case *Parenthesis:
+			v.(*Parenthesis).compute()
+		}
+
+	}
+
+	return -1, -1
+
+}
+
+func (p *Parenthesis) findLevelOps(level int) (int, int, *influxql.BinaryExpr) {
+
+	for i, v := range p.Expr {
+		switch v.(type) {
+		case influxql.Token:
+			token := v.(influxql.Token)
+			if token.Precedence() == level {
+				//fmt.Print("Token : ", v, " Level", level)
+				//fmt.Println(toExpr(p.Expr[i-1]))
+				LHS := toExpr(p.Expr[i-1])
+				RHS := toExpr(p.Expr[i+1])
+
+				//fmt.Println(LHS, RHS)
+
+				return i - 1, i + 1, &influxql.BinaryExpr{
+					Op:  token,
+					LHS: LHS[0].(influxql.Expr),
+					RHS: RHS[0].(influxql.Expr),
+				}
+			}
+		case *Parenthesis:
+			v.(*Parenthesis).compute()
+		}
+	}
+
+	return -1, -1, nil
+}
+
+func (p *Parenthesis) compute() *influxql.ParenExpr {
+
+	//Remove trailing paren
+	if p.Expr[0] == influxql.LPAREN {
+		p.Expr = p.Expr[1:]
+	}
+
+	if p.Expr[len(p.Expr)-1] == influxql.RPAREN {
+		p.Expr = p.Expr[:len(p.Expr)-1]
+	}
+
+	//0. FIND ( )
+	s, e := p.findParenthesis()
+	if s != -1 && e != -1 {
+		if e >= len(p.Expr) {
+			p2 := &Parenthesis{Expr: p.Expr[s:e]}
+			p.Expr = append(p.Expr[:s], p2.compute())
+		} else {
+			p2 := &Parenthesis{Expr: p.Expr[s : e+1]}
+			tmp := p.Expr[e+1:]
+			p.Expr = append(p.Expr[:s], p2.compute())
+			p.Expr = append(p.Expr, tmp...)
+		}
+
+	}
+
+	//5. FIND  *  /  %  <<  >>  &  &^
+	//4. FIND   +  -  |  ^
+	//3. FIND  ==  !=  <  <=  >  >=
+	//2. FIND &&
+	//1. FIND ||
+
+	for i := 5; i >= 0; i-- {
+		for {
+			s, e, expr := p.findLevelOps(i)
+			if s != -1 && e != -1 {
+				if e >= len(p.Expr) {
+					p.Expr = append(p.Expr[:s], expr)
+				} else {
+					tmp := p.Expr[e+1:]
+					p.Expr = append(p.Expr[:s], expr)
+					p.Expr = append(p.Expr, tmp...)
+				}
+			} else {
+				break
+			}
+		}
+	}
+
+	//fmt.Println(p.Expr)
+	//6. Returns
+	//Should be single element
+	return &influxql.ParenExpr{Expr: p.Expr[0].(influxql.Expr)}
+}
+
 type Math struct {
 	Expr  []interface{}
 	Alias string
@@ -141,19 +345,121 @@ type Math struct {
 
 func (m *Math) field() *influxql.Field {
 
-	//TODO implement the logic to read the array
-	//     for now it is only reading the first native binary Expr
+	v := &Parenthesis{m.Expr}
+	return &influxql.Field{Expr: v.compute(), Alias: m.Alias}
 
-	for _, v := range m.Expr {
+}
+
+func (m *Math) expr() *influxql.ParenExpr {
+	p := Parenthesis{Expr: m.Expr}
+	//fmt.Println("EXPR", m.Expr)
+	return p.compute()
+}
+
+type MathExpr struct {
+	Expr  string
+	Alias string
+}
+
+func (m *MathExpr) tokenFromStr(str string) influxql.Token {
+	switch str {
+	case ">=":
+		return influxql.GTE
+	case ">":
+		return influxql.GT
+	case "<=":
+		return influxql.LTE
+	case "<":
+		return influxql.LT
+	case "&&":
+		return influxql.AND
+	case "&":
+		return influxql.BITWISE_AND
+	case "||":
+		return influxql.OR
+	case "|":
+		return influxql.BITWISE_OR
+	case "=":
+		return influxql.EQ
+	case "!=":
+		return influxql.NEQ
+	case "*":
+		return influxql.MUL
+	case "/":
+		return influxql.DIV
+	case "%":
+		return influxql.MOD
+	case "+":
+		return influxql.ADD
+	case "-":
+		return influxql.SUB
+	case "^":
+		return influxql.BITWISE_XOR
+	case "(":
+		return influxql.LPAREN
+	case ")":
+		return influxql.RPAREN
+	default:
+		return -1
+	}
+}
+
+func ParseMathExpr(str string) (*influxql.Expr, error) {
+	expr, err := influxql.ParseExpr(str)
+	if err != nil {
+		return nil, err
+	}
+	return expr, nil
+}
+
+func (m *MathExpr) toMath() *Math {
+	var re = regexp.MustCompile(`(?m)>=|>|<=|<|&&|&|\|\||\||!=|=|\*|\/|%|\+|-|\^|\(|\)`)
+	var array []interface{}
+	m.Expr = strings.Replace(m.Expr, " ", "", -1)
+	lastI := 0
+
+	for _, matches := range re.FindAllStringIndex(m.Expr, -1) {
+		token := m.Expr[matches[0]:matches[1]]
+
+		if matches[0]-lastI == 0 && lastI != 0 {
+		} else {
+			array = append(array, m.Expr[lastI:matches[0]])
+		}
+
+		array = append(array, m.tokenFromStr(token))
+		lastI = matches[1]
+	}
+
+	array = append(array, m.Expr[lastI:])
+
+	for i, v := range array {
 		switch v.(type) {
-		case *influxql.BinaryExpr:
-			return &influxql.Field{Expr: v.(*influxql.BinaryExpr), Alias: m.Alias}
+		case influxql.Token:
+			continue
+		case string:
+			//Read int
+			v2, err := strconv.ParseFloat(v.(string), 64)
+			if err == nil {
+				array[i] = v2
+				continue
+			}
+
+			timeDur, err := time.ParseDuration(v.(string))
+			if err == nil {
+				array[i] = timeDur
+			}
 		}
 	}
 
-	fmt.Println("Warning: Math type only accept a single *influxql.BinaryExpr for the moment.")
+	return &Math{Expr: array, Alias: m.Alias}
+}
 
-	return nil
+func (m *MathExpr) field() *influxql.Field {
+	return &influxql.Field{Expr: m.toMath().expr(), Alias: m.Alias}
+}
+
+func (m *MathExpr) expr() *influxql.ParenExpr {
+	return m.toMath().expr()
 }
 
 type QueryBuilder struct {
@@ -221,8 +527,34 @@ func (q *QueryBuilder) FromRegex(regexes ...*regexp.Regexp) *QueryBuilder {
 	return q
 }
 
+func (q *QueryBuilder) Where(mathExpr MathExprIf) *QueryBuilder {
+	q.selectStatement.Condition = mathExpr.expr()
+	return q
+}
+
 func (q *QueryBuilder) Build() string {
 	return q.selectStatement.String()
+}
+
+func FillOptionFromStr(str string) FillOption {
+
+	switch str {
+	case "none":
+		return FillNoFill{}
+	case "null":
+		return FillNull{}
+	case "linear":
+		return FillLinear{}
+	case "previous":
+		return FillPrevious{}
+	default:
+		value, err := strconv.ParseFloat(str, 64)
+		if err == nil {
+			return FillNumber{Value: value}
+		} else {
+			return FillNoFill{}
+		}
+	}
 }
 
 func NewQueryBuilder() *QueryBuilder {
