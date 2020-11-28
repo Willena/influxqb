@@ -9,33 +9,20 @@ import (
 
 func main() {
 
-	builder := influxqb.NewSelectBuilder()
-	builder.Select(
-		&influxqb.Function{Name: "MEAN", Args: []interface{}{"colomn", time.Now(), 45.36, time.Hour}},
-		&influxqb.Field{Name: "MyField"},
-	)
-	builder.From("XTC_OLD'sk")
-	builder.GroupBy(
-		&influxqb.Field{Name: "GroupByField"},
-		&influxqb.TimeSampling{Interval: time.Hour},
-	)
-	builder.Fill(45)
-	builder.Limit(250)
-	builder.Offset(15)
-	builder.SeriesLimit(2)
-	builder.SeriesOffset(8)
-	builder.Where(
-		influxqb.And(
-			influxqb.Eq(influxqb.Field{Name: "Tptp"}, "data"),
-			influxqb.Eq("ooo", 16.55)),
-	)
+	builder := influxqb.NewAlterRetentionPolicyBuilder().
+		WithPolicyName("MyPolicy").
+		WithDatabase("database").
+		WithDurationString("1h").
+		WithReplicationFactor(26).
+		WithShardDurationString("2000h").
+		SetAsDefault(true)
 
 	fmt.Println(builder.Build())
 
 	influxqb.NewSelectBuilder().Select("lll")
 
 	//influxqb.NewQueryBuilder().
-	//	SelectField("toto").SelectFunction("Name", 1,2,3).
+	//	SelectField("toto").SelectFunction("WithPolicyName", 1,2,3).
 	//	FromMeasurement("measurement").
 	//	Where("Field").Equals("value").And("Field2").GreaterThan("pop").Or("12+3").LessThan(45).
 	//	OrderBy("Field").GroupBy(TimeSampl).Fill(0)

@@ -9,3 +9,7 @@ type BuilderIf interface {
 func NewSelectBuilder() *SelectBuilder {
 	return &SelectBuilder{selectStatement: &influxql.SelectStatement{}}
 }
+
+func NewAlterRetentionPolicyBuilder() *AlterRetentionPolicyBuilder {
+	return &AlterRetentionPolicyBuilder{alterStm: &influxql.AlterRetentionPolicyStatement{}}
+}
