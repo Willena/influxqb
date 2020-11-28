@@ -3,40 +3,59 @@ package main
 import (
 	"fmt"
 	"github.com/influxdata/influxql"
-	"github.com/willena/influxql-query-builder"
+	"github.com/willena/influxqb"
 	"time"
 )
 
 func main() {
 
-	//s := influxql.StringLiteral{Val: "TestField"}
+	builder := influxqb.NewSelectBuilder()
+	builder.Select(
+		&influxqb.Function{Name: "MEAN", Args: []interface{}{"colomn", time.Now(), 45.36, time.Hour}},
+		&influxqb.Field{Name: "MyField"},
+	)
+	builder.From("XTC_OLD'sk")
+	builder.GroupBy(
+		&influxqb.Field{Name: "GroupByField"},
+		&influxqb.TimeSampling{Interval: time.Hour},
+	)
+	builder.Fill(45)
+	builder.Limit(250)
+	builder.Offset(15)
+	builder.SeriesLimit(2)
+	builder.SeriesOffset(8)
+	builder.Where(
+		influxqb.And(
+			influxqb.Eq(influxqb.Field{Name: "Tptp"}, "data"),
+			influxqb.Eq("ooo", 16.55)),
+	)
 
-	//s, err := influxql.ParseStatement("SELECT toto, titi FROM a WHERE a = 'r'; DROP MEASUREMENT kkk'")
-	//
-	//
-	//fmt.Println(s)
-	//fmt.Println(err)
-	//
-	//s2 := influxql.MustParseExpr("A >= rt',;ja AND T < 15h")
-	//fmt.Println(s2)
+	fmt.Println(builder.Build())
 
-	q, err := influxql.ParseStatement("SELECT \"toto\" FROM \"uuu\"")
+	influxqb.NewSelectBuilder().Select("lll")
+
+	//influxqb.NewQueryBuilder().
+	//	SelectField("toto").SelectFunction("Name", 1,2,3).
+	//	FromMeasurement("measurement").
+	//	Where("Field").Equals("value").And("Field2").GreaterThan("pop").Or("12+3").LessThan(45).
+	//	OrderBy("Field").GroupBy(TimeSampl).Fill(0)
+
+	//q, err := influxql.ParseStatement("SELECT \"toto\" FROM \"uuu\"")
 
 	f := influxql.Field{Expr: &influxql.VarRef{Val: "Tot\"o", Type: influxql.String}}
 
 	fmt.Println(f.String())
-	fmt.Println(q, err)
 	fmt.Println(&influxql.Measurement{Name: "r\"fjf"})
 
-	//InfluxQlWrapper()
-	//influxQLTest()
+	InfluxQlWrapper()
+	influxQLTest()
 }
 
 func InfluxQlWrapper() {
 
 	dur, _ := time.ParseDuration("15h")
 
-	builder := influxqb.NewQueryBuilder()
+	builder := influxqb.NewSelectBuilder()
 	builder.Select(
 		&influxqb.Function{Name: "MEAN", Args: []interface{}{"colomn", time.Now(), 45.36, dur}},
 		&influxqb.Field{Name: "MyField"},
