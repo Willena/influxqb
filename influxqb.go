@@ -29,3 +29,7 @@ func NewCreateDatabaseBuilder() *CreateDatabaseBuilder {
 func NewCreateSubscriptionBuilder() *CreateSubscriptionBuilder {
 	return &CreateSubscriptionBuilder{subStm: &influxql.CreateSubscriptionStatement{}}
 }
+
+func NewCreateUserBuilder() *CreateUserBuilder {
+	return &CreateUserBuilder{cu: &influxql.CreateUserStatement{}}
+}
