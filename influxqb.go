@@ -33,6 +33,11 @@ func NewCreateSubscriptionBuilder() *CreateSubscriptionBuilder {
 func NewCreateUserBuilder() *CreateUserBuilder {
 	return &CreateUserBuilder{cu: &influxql.CreateUserStatement{}}
 }
+
 func NewDeleteBuilder() *DeleteBuilder {
 	return &DeleteBuilder{del: &influxql.DeleteStatement{}}
+}
+
+func NewDropContinuousQuery() *DropContinuousQueryBuilder {
+	return &DropContinuousQueryBuilder{dcq: &influxql.DropContinuousQueryStatement{}}
 }
