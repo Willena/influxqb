@@ -13,3 +13,7 @@ func NewSelectBuilder() *SelectBuilder {
 func NewAlterRetentionPolicyBuilder() *AlterRetentionPolicyBuilder {
 	return &AlterRetentionPolicyBuilder{alterStm: &influxql.AlterRetentionPolicyStatement{}}
 }
+
+func NewCreateContinuousQueryBuilder() *CreateContinuousQueryBuilder {
+	return &CreateContinuousQueryBuilder{continuousQuery: &influxql.CreateContinuousQueryStatement{}, selectBuilder: NewSelectBuilder()}
+}

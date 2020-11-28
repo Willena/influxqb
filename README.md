@@ -15,11 +15,10 @@ This go package is built on top of the influxql parser and offers a more simple 
 
 * select_stmt 
 * alter_retention_policy_stmt
+* create_continuous_query_stmt
 
 ## Todo
 
-
-* create_continuous_query_stmt
 * create_database_stmt
 * create_retention_policy_stmt
 * create_subscription_stmt

@@ -488,7 +488,7 @@ var testSamples = []struct {
 	},
 }
 
-func TestSelect(t *testing.T) {
+func TestSelectBuilder(t *testing.T) {
 	for i, sample := range testSamples {
 		s, err := sample.b.Build()
 
