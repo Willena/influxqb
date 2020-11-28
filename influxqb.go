@@ -21,6 +21,11 @@ func NewCreateContinuousQueryBuilder() *CreateContinuousQueryBuilder {
 func NewCreateRetentionPolicyBuilder() *CreateRetentionPolicyBuilder {
 	return &CreateRetentionPolicyBuilder{ret: &influxql.CreateRetentionPolicyStatement{}}
 }
+
 func NewCreateDatabaseBuilder() *CreateDatabaseBuilder {
 	return &CreateDatabaseBuilder{dbStatement: &influxql.CreateDatabaseStatement{}}
+}
+
+func NewCreateSubscriptionBuilder() *CreateSubscriptionBuilder {
+	return &CreateSubscriptionBuilder{subStm: &influxql.CreateSubscriptionStatement{}}
 }

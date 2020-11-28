@@ -18,11 +18,12 @@ This go package is built on top of the influxql parser and offers a more simple 
 * create_continuous_query_stmt
 * create_retention_policy_stmt
 * create_database_stmt
+* create_subscription_stmt
 
 ## Todo
 
 
-* create_subscription_stmt
+
 * create_user_stmt
 * delete_stmt
 * drop_continuous_query_stmt 
