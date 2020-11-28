@@ -3,19 +3,19 @@ package influxqb
 import "github.com/influxdata/influxql"
 
 type DropRetentionPolicyBuilder struct {
-	dcq *influxql.DropRetentionPolicyStatement
+	drp *influxql.DropRetentionPolicyStatement
 }
 
 func (b *DropRetentionPolicyBuilder) WithRetentionPolicy(RetentionPolicy string) *DropRetentionPolicyBuilder {
-	b.dcq.Name = RetentionPolicy
+	b.drp.Name = RetentionPolicy
 	return b
 }
 
 func (b *DropRetentionPolicyBuilder) WithDatabase(database string) *DropRetentionPolicyBuilder {
-	b.dcq.Database = database
+	b.drp.Database = database
 	return b
 }
 
 func (b *DropRetentionPolicyBuilder) Build() (string, error) {
-	return b.dcq.String(), nil
+	return b.drp.String(), nil
 }

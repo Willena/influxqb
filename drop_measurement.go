@@ -3,14 +3,14 @@ package influxqb
 import "github.com/influxdata/influxql"
 
 type DropMeasurementBuilder struct {
-	dcq *influxql.DropMeasurementStatement
+	dms *influxql.DropMeasurementStatement
 }
 
 func (b *DropMeasurementBuilder) WithMeasurement(Measurement string) *DropMeasurementBuilder {
-	b.dcq.Name = Measurement
+	b.dms.Name = Measurement
 	return b
 }
 
 func (b *DropMeasurementBuilder) Build() (string, error) {
-	return b.dcq.String(), nil
+	return b.dms.String(), nil
 }

@@ -5,12 +5,12 @@ import (
 )
 
 type DropSeriesBuilder struct {
-	del *influxql.DropSeriesStatement
+	dss *influxql.DropSeriesStatement
 }
 
 func (b *DropSeriesBuilder) From(sources ...*Measurement) *DropSeriesBuilder {
 	for _, f := range sources {
-		b.del.Sources = append(b.del.Sources, f.m)
+		b.dss.Sources = append(b.dss.Sources, f.m)
 	}
 	return b
 }
@@ -18,15 +18,15 @@ func (b *DropSeriesBuilder) From(sources ...*Measurement) *DropSeriesBuilder {
 func (b *DropSeriesBuilder) Where(condition interface{}) *DropSeriesBuilder {
 	switch condition.(type) {
 	case influxql.Expr:
-		b.del.Condition = &influxql.ParenExpr{Expr: condition.(influxql.Expr)}
+		b.dss.Condition = &influxql.ParenExpr{Expr: condition.(influxql.Expr)}
 		break
 	case MathExprIf:
-		b.del.Condition = condition.(MathExprIf).expr()
+		b.dss.Condition = condition.(MathExprIf).expr()
 		break
 	}
 	return b
 }
 
 func (b *DropSeriesBuilder) Build() (string, error) {
-	return b.del.String(), nil
+	return b.dss.String(), nil
 }

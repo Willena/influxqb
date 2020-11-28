@@ -47,13 +47,17 @@ func NewDropDatabase() *DropDatabaseBuilder {
 }
 
 func NewDropMeasurement() *DropMeasurementBuilder {
-	return &DropMeasurementBuilder{dcq: &influxql.DropMeasurementStatement{}}
+	return &DropMeasurementBuilder{dms: &influxql.DropMeasurementStatement{}}
 }
 
 func NewDropRetentionPolicy() *DropRetentionPolicyBuilder {
-	return &DropRetentionPolicyBuilder{dcq: &influxql.DropRetentionPolicyStatement{}}
+	return &DropRetentionPolicyBuilder{drp: &influxql.DropRetentionPolicyStatement{}}
 }
 
 func NewDropSeries() *DropSeriesBuilder {
-	return &DropSeriesBuilder{del: &influxql.DropSeriesStatement{}}
+	return &DropSeriesBuilder{dss: &influxql.DropSeriesStatement{}}
+}
+
+func NewDropShard() *DropShardBuilder {
+	return &DropShardBuilder{dss: &influxql.DropShardStatement{}}
 }
