@@ -13,8 +13,54 @@ This go package is built on top of the influxql parser and offers a more simple 
 
 ## Things that are working
 
-* Select Statements 
+* select_stmt 
 
+## Todo
+
+* alter_retention_policy_stmt
+* create_continuous_query_stmt
+* create_database_stmt
+* create_retention_policy_stmt
+* create_subscription_stmt
+* create_user_stmt
+* delete_stmt
+* drop_continuous_query_stmt 
+* drop_database_stmt 
+* drop_measurement_stmt 
+* drop_retention_policy_stmt 
+* drop_series_stmt 
+* drop_shard_stmt 
+* drop_subscription_stmt 
+* drop_user_stmt 
+* explain_stmt 
+* explain_analyze_stmt 
+* grant_stmt 
+* kill_query_statement 
+* revoke_stmt 
+* show_continuous_queries_stmt 
+* show_databases_stmt 
+* show_diagnostics_stmt 
+* show_field_key_cardinality_stmt 
+* show_field_keys_stmt 
+* show_grants_stmt 
+* show_measurement_cardinality_stmt 
+* show_measurement_exact_cardinality_stmt 
+* show_measurements_stmt 
+* show_queries_stmt 
+* show_retention_policies_stmt 
+* show_series_cardinality_stmt 
+* show_series_exact_cardinality_stmt 
+* show_series_stmt 
+* show_shard_groups_stmt 
+* show_shards_stmt 
+* show_stats_stmt 
+* show_subscriptions_stmt 
+* show_tag_key_cardinality_stmt 
+* show_tag_key_exact_cardinality_stmt 
+* show_tag_keys_stmt 
+* show_tag_values_stmt 
+* show_tag_values_cardinality_stmt 
+* show_users_stmt 
 
 
 ## example 
