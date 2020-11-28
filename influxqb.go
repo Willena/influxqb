@@ -17,3 +17,10 @@ func NewAlterRetentionPolicyBuilder() *AlterRetentionPolicyBuilder {
 func NewCreateContinuousQueryBuilder() *CreateContinuousQueryBuilder {
 	return &CreateContinuousQueryBuilder{continuousQuery: &influxql.CreateContinuousQueryStatement{}, selectBuilder: NewSelectBuilder()}
 }
+
+func NewCreateRetentionPolicyBuilder() *CreateRetentionPolicyBuilder {
+	return &CreateRetentionPolicyBuilder{ret: &influxql.CreateRetentionPolicyStatement{}}
+}
+func NewCreateDatabaseBuilder() *CreateDatabaseBuilder {
+	return &CreateDatabaseBuilder{dbStatement: &influxql.CreateDatabaseStatement{}}
+}
