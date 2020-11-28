@@ -41,3 +41,6 @@ func NewDeleteBuilder() *DeleteBuilder {
 func NewDropContinuousQuery() *DropContinuousQueryBuilder {
 	return &DropContinuousQueryBuilder{dcq: &influxql.DropContinuousQueryStatement{}}
 }
+func NewDropDatabase() *DropDatabaseBuilder {
+	return &DropDatabaseBuilder{dcq: &influxql.DropDatabaseStatement{}}
+}
