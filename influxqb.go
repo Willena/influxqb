@@ -53,3 +53,7 @@ func NewDropMeasurement() *DropMeasurementBuilder {
 func NewDropRetentionPolicy() *DropRetentionPolicyBuilder {
 	return &DropRetentionPolicyBuilder{dcq: &influxql.DropRetentionPolicyStatement{}}
 }
+
+func NewDropSeries() *DropSeriesBuilder {
+	return &DropSeriesBuilder{del: &influxql.DropSeriesStatement{}}
+}
