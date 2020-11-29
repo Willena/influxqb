@@ -11,6 +11,19 @@ The influxQL parser contains all the required types to manually build a query fr
 
 This go package is built on top of the influxql parser and offers a more simple way to create queries.  
 
+## Use 
+
+``` go get github.com/willena/influxqb ```
+
+
+## Todo
+
+* Add custom object for some statements
+* Add tests for "SHOW" queries
+* Cleanup files, Reorganize files
+* Throw errors if query does not met requirement when building
+* Add all known aggragation functions
+
 ## Things that are working
 
 * select_stmt 
@@ -62,14 +75,7 @@ This go package is built on top of the influxql parser and offers a more simple 
 * show_users_stmt 
 * show_tag_values_cardinality_stmt 
 
-## Todo
-
-* Add custom object for some statements
-* Add tests for "SHOW" queries
-* Cleanup files, Reorganize files
-* Throw errors if query does not met requirement when building
-
-## example 
+## Example 
 ```go
 package main 
 
