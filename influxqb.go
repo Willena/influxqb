@@ -69,3 +69,7 @@ func NewDropSubscription() *DropSubscriptionBuilder {
 func NewDropUser() *DropUserBuilder {
 	return &DropUserBuilder{dss: &influxql.DropUserStatement{}}
 }
+
+func NewExplainBuilder() *ExplainBuilder {
+	return &ExplainBuilder{explainStatement: &influxql.ExplainStatement{}, selectBuilder: &SelectBuilder{}}
+}

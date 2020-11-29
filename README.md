@@ -29,13 +29,13 @@ This go package is built on top of the influxql parser and offers a more simple 
 * drop_shard_stmt 
 * drop_subscription_stmt 
 * drop_user_stmt 
+* explain_stmt 
+* explain_analyze_stmt 
 
 
 ## Todo
 
 
-* explain_stmt 
-* explain_analyze_stmt 
 * grant_stmt 
 * kill_query_statement 
 * revoke_stmt 
