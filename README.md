@@ -35,33 +35,38 @@ This go package is built on top of the influxql parser and offers a more simple 
 * revoke_stmt 
 * kill_query_statement 
 
-## Todo
-
 
 * show_continuous_queries_stmt 
 * show_databases_stmt 
 * show_diagnostics_stmt 
 * show_field_key_cardinality_stmt 
-* show_field_keys_stmt 
-* show_grants_stmt 
+* show_field_keys_stmt
+* show_grants_stmt
 * show_measurement_cardinality_stmt 
-* show_measurement_exact_cardinality_stmt 
-* show_measurements_stmt 
+* show_measurement_exact_cardinality_stmt
 * show_queries_stmt 
+* show_measurements_stmt 
 * show_retention_policies_stmt 
-* show_series_cardinality_stmt 
-* show_series_exact_cardinality_stmt 
 * show_series_stmt 
 * show_shard_groups_stmt 
-* show_shards_stmt 
 * show_stats_stmt 
 * show_subscriptions_stmt 
+* show_tag_values_stmt 
+* show_series_cardinality_stmt 
+* show_series_exact_cardinality_stmt 
 * show_tag_key_cardinality_stmt 
 * show_tag_key_exact_cardinality_stmt 
+* show_shards_stmt 
 * show_tag_keys_stmt 
-* show_tag_values_stmt 
-* show_tag_values_cardinality_stmt 
 * show_users_stmt 
+
+## Todo
+
+ 
+
+
+* show_tag_values_cardinality_stmt 
+
 
 
 ## example 
