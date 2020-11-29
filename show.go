@@ -33,9 +33,9 @@ func (b *ShowQueries) Build() (string, error) {
 	return q.String(), nil
 }
 
-type ShowShardGroup struct{}
+type ShowShardGroups struct{}
 
-func (b *ShowShardGroup) Build() (string, error) {
+func (b *ShowShardGroups) Build() (string, error) {
 	q := &influxql.ShowShardGroupsStatement{}
 	return q.String(), nil
 }
@@ -150,16 +150,16 @@ func (b *ShowFieldKeys) Offset(offset int) *ShowFieldKeys {
 	return b
 }
 
-type ShowGrant struct {
+type ShowGrants struct {
 	q *influxql.ShowGrantsForUserStatement
 }
 
-func (b *ShowGrant) ForUser(user string) *ShowGrant {
+func (b *ShowGrants) ForUser(user string) *ShowGrants {
 	b.q.Name = user
 	return b
 }
 
-func (b *ShowGrant) Build() (string, error) {
+func (b *ShowGrants) Build() (string, error) {
 	return b.q.String(), nil
 }
 
@@ -388,38 +388,38 @@ func (b *ShowStats) Build() (string, error) {
 	return b.q.String(), nil
 }
 
-type ShowTagKayCardinality struct {
+type ShowTagKeyCardinality struct {
 	q *influxql.ShowTagKeyCardinalityStatement
 }
 
-func (b *ShowTagKayCardinality) Exact() *ShowTagKayCardinality {
+func (b *ShowTagKeyCardinality) Exact() *ShowTagKeyCardinality {
 	b.q.Exact = true
 	return b
 }
 
-func (b *ShowTagKayCardinality) Limit(limit int) *ShowTagKayCardinality {
+func (b *ShowTagKeyCardinality) Limit(limit int) *ShowTagKeyCardinality {
 	b.q.Limit = limit
 	return b
 }
 
-func (b *ShowTagKayCardinality) Offset(offset int) *ShowTagKayCardinality {
+func (b *ShowTagKeyCardinality) Offset(offset int) *ShowTagKeyCardinality {
 	b.q.Offset = offset
 	return b
 }
 
-func (b *ShowTagKayCardinality) OnDatabase(str string) *ShowTagKayCardinality {
+func (b *ShowTagKeyCardinality) OnDatabase(str string) *ShowTagKeyCardinality {
 	b.q.Database = str
 	return b
 }
 
-func (b *ShowTagKayCardinality) From(sources ...*Measurement) *ShowTagKayCardinality {
+func (b *ShowTagKeyCardinality) From(sources ...*Measurement) *ShowTagKeyCardinality {
 	for _, me := range sources {
 		b.q.Sources = append(b.q.Sources, me.m)
 	}
 	return b
 }
 
-func (b *ShowTagKayCardinality) GroupBy(fields ...GroupByIf) *ShowTagKayCardinality {
+func (b *ShowTagKeyCardinality) GroupBy(fields ...GroupByIf) *ShowTagKeyCardinality {
 	for _, f := range fields {
 		if finalField := f.groupBy(); finalField != nil {
 			b.q.Dimensions = append(b.q.Dimensions, finalField)
@@ -428,7 +428,7 @@ func (b *ShowTagKayCardinality) GroupBy(fields ...GroupByIf) *ShowTagKayCardinal
 	return b
 }
 
-func (b *ShowTagKayCardinality) Where(condition interface{}) *ShowTagKayCardinality {
+func (b *ShowTagKeyCardinality) Where(condition interface{}) *ShowTagKeyCardinality {
 	switch condition.(type) {
 	case influxql.Expr:
 		b.q.Condition = &influxql.ParenExpr{Expr: condition.(influxql.Expr)}
@@ -440,7 +440,7 @@ func (b *ShowTagKayCardinality) Where(condition interface{}) *ShowTagKayCardinal
 	return b
 }
 
-func (b *ShowTagKayCardinality) Build() (string, error) {
+func (b *ShowTagKeyCardinality) Build() (string, error) {
 	return b.q.String(), nil
 }
 

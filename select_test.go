@@ -61,7 +61,7 @@ var testSamples = []struct {
 	},
 	{
 		"Select function and string argument",
-		NewSelectBuilder().Select(&Function{Name: "MEAN", Args: []interface{}{"FieldA"}}).From("MyMeasurement"),
+		NewSelectBuilder().Select(NewFunction("MEAN").WithArgs("FieldA")).From("MyMeasurement"),
 		"SELECT MEAN('FieldA') FROM MyMeasurement",
 		false,
 	},
@@ -371,7 +371,7 @@ var testSamples = []struct {
 	},
 	{
 		"Select * where is string",
-		NewSelectBuilder().Select(&Wildcard{}).From("MyMeasurement").OrderBy("time", DESC).
+		NewSelectBuilder().Select(NewWildcardField()).From("MyMeasurement").OrderBy("time", DESC).
 			Where(&MathExpr{Expr: "toto = 56 AND time < '2020-05-16T00:00:00.000000153Z' OR ('tutututu' = 12 AND 'aaa' = 'A') AND (value >= 323 AND computer = 'toto' AND ptio > (15 + 35.300))"}),
 		"SELECT * FROM MyMeasurement WHERE (toto = 56 AND time < '2020-05-16T00:00:00.000000153Z' OR ('tutututu' = 12 AND 'aaa' = 'A') AND (value >= 323 AND computer = 'toto' AND ptio > (15 + 35.300))) ORDER BY time DESC",
 		false,
@@ -411,7 +411,7 @@ var testSamples = []struct {
 	{
 		"Select Add GroupBy",
 		NewSelectBuilder().Select("field1").From("MyMeasurement").GroupBy(&Field{Name: "f1"}).
-			AddGroupBy(&TimeSampling{Interval: time.Hour}),
+			AddGroupBy(NewTimeSampling(time.Hour)),
 		"SELECT field1 FROM MyMeasurement GROUP BY f1, time(1h)",
 		false,
 	},
@@ -448,10 +448,10 @@ var testSamples = []struct {
 			AddSelect(&Math{Expr: []interface{}{Multiply(Field{Name: "MINUS"}, uint64(1))}}).
 			AddSelect(&Math{Expr: []interface{}{Modulus(Field{Name: "MINUS"}, uint8(1))}}).
 			From("table2").
-			Where(&Math{Expr: []interface{}{Or(
+			Where(NewMath().WithExpr(Or(
 				NotEq(Field{Name: "A"}, int16(165)),
 				LessThanEq(Field{Name: "time"}, time.Date(1970, 01, 01, 0, 0, 0, 0, time.UTC)),
-			)}}),
+			))),
 		"SELECT (A + 32), (TU / 3.200), (MINUS - 32), (MINUS * 1), (MINUS % 1) FROM table2 WHERE (A != 165 OR time <= '1970-01-01T00:00:00Z')",
 		false,
 	},
@@ -466,23 +466,18 @@ var testSamples = []struct {
 			From("table2").
 			Where(
 				Or(
-					NotEq(Field{Name: "A"}, int16(165)),
+					NotEq(NewField("A"), int16(165)),
 					LessThanEq(Field{Name: "time"}, time.Date(1970, 01, 01, 0, 0, 0, 0, time.UTC)),
 				)),
 		"SELECT (A + 32), (TU / 3.200), (MINUS - 32), (MINUS * 1), (MINUS % 1) FROM table2 WHERE (A != 165 OR time <= '1970-01-01T00:00:00Z')",
 		false,
 	},
 	{
-		"Select into ",
+		"Select into Nice functions ",
 		NewSelectBuilder().
 			Select(&Field{Name: "A"}).
 			From("table2").
-			Into(&influxql.Measurement{
-				Database:        "MyDB",
-				RetentionPolicy: "RP",
-				Name:            "Measurement",
-				IsTarget:        true,
-			}),
+			Into(NewMeasurement().WithDatabase("MyDB").WithPolicy("RP").Name("Measurement")),
 		"SELECT A INTO MyDB.RP.\"Measurement\" FROM table2",
 		false,
 	},

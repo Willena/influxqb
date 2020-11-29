@@ -32,8 +32,32 @@ type Field struct {
 	Alias string
 	Type  influxql.DataType
 }
+
+func (f *Field) WithName(str string) *Field {
+	f.Name = str
+	return f
+}
+
+func (f *Field) WithAlias(str string) *Field {
+	f.Alias = str
+	return f
+}
+
+func (f *Field) WithType(inType influxql.DataType) *Field {
+	f.Type = inType
+	return f
+}
+
+func NewField(name string) *Field {
+	return &Field{Name: name}
+}
+
 type Wildcard struct {
 	FieldIf
+}
+
+func NewWildcardField() *Wildcard {
+	return &Wildcard{}
 }
 
 type GroupByIf interface {
@@ -48,15 +72,46 @@ type TimeSampling struct {
 	Interval time.Duration
 }
 
+func NewTimeSampling(it time.Duration) *TimeSampling {
+	return &TimeSampling{Interval: it}
+}
+
 type Function struct {
 	Name  string
 	Args  []interface{}
 	Alias string
 }
 
+func (f *Function) WithAlias(alias string) *Function {
+	f.Alias = alias
+	return f
+}
+
+func (f *Function) WithArgs(args ...interface{}) *Function {
+	f.Args = append(f.Args, args...)
+	return f
+}
+
+func (f *Function) WithArg(arg interface{}) *Function {
+	return f.WithArgs(arg)
+}
+
+func NewFunction(functionName string) *Function {
+	return &Function{Name: functionName}
+}
+
 type MathExpr struct {
 	Expr  string
 	Alias string
+}
+
+func (m *MathExpr) WithAlias(alias string) *MathExpr {
+	m.Alias = alias
+	return m
+}
+
+func NewMathExpr(expr string) *MathExpr {
+	return &MathExpr{Expr: expr}
 }
 
 func (receiver FillNoFill) get() (influxql.FillOption, interface{}) {
@@ -305,6 +360,21 @@ type Math struct {
 	Alias string
 }
 
+func NewMath() *Math {
+	return &Math{Expr: []interface{}{}}
+}
+
+func (m *Math) WithAlias(alias string) *Math {
+	m.Alias = alias
+	return m
+}
+
+func (m *Math) WithExpr(elements ...interface{}) *Math {
+	m.Expr = []interface{}{}
+	m.Expr = append(m.Expr, elements...)
+	return m
+}
+
 func (m *Math) field() *influxql.Field {
 
 	v := &Parenthesis{m.Expr}
@@ -497,9 +567,9 @@ func (q *SelectBuilder) OrderBy(str string, order Order) *SelectBuilder {
 	return q
 }
 
-func (q *SelectBuilder) Into(mesurement *influxql.Measurement) *SelectBuilder {
+func (q *SelectBuilder) Into(mesurement *Measurement) *SelectBuilder {
 	//TODO Improve this function
-	q.selectStatement.Target = &influxql.Target{Measurement: mesurement}
+	q.selectStatement.Target = &influxql.Target{Measurement: mesurement.m}
 	return q
 }
 

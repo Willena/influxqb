@@ -35,6 +35,7 @@ This go package is built on top of the influxql parser and offers a more simple 
 * revoke_stmt 
 * kill_query_statement 
 
+## Not tested
 
 * show_continuous_queries_stmt 
 * show_databases_stmt 
@@ -59,15 +60,14 @@ This go package is built on top of the influxql parser and offers a more simple 
 * show_shards_stmt 
 * show_tag_keys_stmt 
 * show_users_stmt 
+* show_tag_values_cardinality_stmt 
 
 ## Todo
 
- 
-
-
-* show_tag_values_cardinality_stmt 
-
-
+* Add custom object for some statements
+* Add tests for "SHOW" queries
+* Cleanup files, Reorganize files
+* Throw errors if query does not met requirement when building
 
 ## example 
 ```go
