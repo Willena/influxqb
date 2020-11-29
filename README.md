@@ -27,12 +27,12 @@ This go package is built on top of the influxql parser and offers a more simple 
 * drop_retention_policy_stmt 
 * drop_series_stmt 
 * drop_shard_stmt 
+* drop_subscription_stmt 
 
 
 ## Todo
 
 
-* drop_subscription_stmt 
 * drop_user_stmt 
 * explain_stmt 
 * explain_analyze_stmt 

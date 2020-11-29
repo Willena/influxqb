@@ -61,3 +61,7 @@ func NewDropSeries() *DropSeriesBuilder {
 func NewDropShard() *DropShardBuilder {
 	return &DropShardBuilder{dss: &influxql.DropShardStatement{}}
 }
+
+func NewDropSubscription() *DropSubscriptionBuilder {
+	return &DropSubscriptionBuilder{dss: &influxql.DropSubscriptionStatement{}}
+}
