@@ -73,3 +73,7 @@ func NewDropUser() *DropUserBuilder {
 func NewExplainBuilder() *ExplainBuilder {
 	return &ExplainBuilder{explainStatement: &influxql.ExplainStatement{}, selectBuilder: &SelectBuilder{}}
 }
+
+func NewGrantBuilder() *GrantBuilder {
+	return &GrantBuilder{}
+}
