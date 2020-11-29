@@ -83,14 +83,13 @@ import (
 func main() {
 
 	builder := influxqb.NewSelectBuilder()
-	builder.Select(
-		&influxqb.Function{Name: "MEAN", Args: []interface{}{"colomn", time.Now(), 45.36, time.Hour}},
-		&influxqb.Field{Name: "MyField"},
+	builder.Select(influxqb.NewFunction("MEAN").WithArgs("colomn", time.Now(), 45.36, time.Hour),
+		influxqb.NewField("MyField"),
 	)
 	builder.From("XTC_OLD'sk")
 	builder.GroupBy(
-		&influxqb.Field{Name: "GroupByField"},
-		&influxqb.TimeSampling{Interval: time.Hour},
+		influxqb.NewField("GroupByField"),
+		influxqb.NewTimeSampling(time.Hour),
 	)
 	builder.Fill(45)
 	builder.Limit(250)
