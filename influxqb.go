@@ -81,3 +81,7 @@ func NewGrantBuilder() *GrantBuilder {
 func NewRevokeBuilder() *RevokeBuilder {
 	return &RevokeBuilder{}
 }
+
+func NewKillQueryBuilder() *KillQueryBuilder {
+	return &KillQueryBuilder{dss: &influxql.KillQueryStatement{}}
+}
