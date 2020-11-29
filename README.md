@@ -104,7 +104,8 @@ func main() {
 ```
 
 ## Licence
-   
+
+```text
    InfluxQb Go package
    Copyright 2020 Guillaume VILLENA aka "Willena"
    
@@ -119,3 +120,4 @@ func main() {
    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
    See the License for the specific language governing permissions and
    limitations under the License.
+```
