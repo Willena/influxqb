@@ -32,12 +32,12 @@ This go package is built on top of the influxql parser and offers a more simple 
 * explain_stmt 
 * explain_analyze_stmt 
 * grant_stmt 
+* revoke_stmt 
 
 
 ## Todo
 
 * kill_query_statement 
-* revoke_stmt 
 * show_continuous_queries_stmt 
 * show_databases_stmt 
 * show_diagnostics_stmt 

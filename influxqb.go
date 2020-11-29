@@ -77,3 +77,7 @@ func NewExplainBuilder() *ExplainBuilder {
 func NewGrantBuilder() *GrantBuilder {
 	return &GrantBuilder{}
 }
+
+func NewRevokeBuilder() *RevokeBuilder {
+	return &RevokeBuilder{}
+}
