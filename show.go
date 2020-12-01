@@ -150,6 +150,10 @@ func (b *ShowFieldKeys) Offset(offset int) *ShowFieldKeys {
 	return b
 }
 
+func (b *ShowFieldKeys) Build() (string, error) {
+	return b.q.String(), nil
+}
+
 type ShowGrants struct {
 	q *influxql.ShowGrantsForUserStatement
 }

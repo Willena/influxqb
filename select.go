@@ -209,7 +209,7 @@ func toExpr(a interface{}) influxql.Expr {
 	case time.Time:
 		return &influxql.TimeLiteral{Val: a.(time.Time)}
 	case *time.Time:
-		tmp := a.(time.Time)
+		tmp := *a.(*time.Time)
 		return &influxql.TimeLiteral{Val: tmp}
 	case time.Duration:
 		return &influxql.DurationLiteral{Val: a.(time.Duration)}
