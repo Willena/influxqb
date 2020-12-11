@@ -431,8 +431,14 @@ func (q *SelectBuilder) Select(fields ...interface{}) *SelectBuilder {
 			q.selectStatement.Fields = append(q.selectStatement.Fields, &influxql.Field{Expr: &influxql.RegexLiteral{Val: final}})
 			break
 		case string:
-			f2 := &Field{Name: f.(string)}
-			q.selectStatement.Fields = append(q.selectStatement.Fields, f2.field())
+			if f.(string) == "*" {
+				f2 := &Wildcard{}
+				q.selectStatement.Fields = append(q.selectStatement.Fields, f2.field())
+			} else {
+				f2 := &Field{Name: f.(string)}
+				q.selectStatement.Fields = append(q.selectStatement.Fields, f2.field())
+			}
+
 			break
 		}
 	}
