@@ -1,4 +1,4 @@
-# Influxqb - A simple Query builder for InfluxDB
+# Influxqb - A simple Query builder for InfluxDB 1.x
 
 ## Intro
 
