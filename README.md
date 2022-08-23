@@ -116,7 +116,7 @@ func main() {
 
 ```text
    InfluxQb Go package
-   Copyright 2020 Guillaume VILLENA aka "Willena"
+   Copyright 2022 Guillaume VILLENA aka "Willena"
    
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
