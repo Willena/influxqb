@@ -305,7 +305,7 @@ var testSamples = []struct {
 					15, influxql.ADD, 35.3,
 					influxql.RPAREN,
 					influxql.RPAREN}}),
-		"SELECT * FROM MyMeasurement WHERE (toto = 56 AND time < '2020-05-16T00:00:00.000000153Z' OR ('tutututu' = 12 AND 'aaa' = 'A') AND (value >= 323 AND computer = 'toto' AND ptio > (15 + 35.300))) ORDER BY time DESC",
+		"SELECT * FROM MyMeasurement WHERE (toto = 56 AND time < '2020-05-16T00:00:00.000000153Z' OR ('tutututu' = 12 AND 'aaa' = 'A') AND (value >= 323 AND computer = 'toto' AND ptio > (15 + 35.3))) ORDER BY time DESC",
 		false,
 	},
 	{
@@ -334,7 +334,7 @@ var testSamples = []struct {
 							influxql.AND, &Field{Name: "ptio"}, influxql.GT, &Parenthesis{Expr: []interface{}{uint16(15), influxql.ADD, 35.3}},
 						}},
 				}}),
-		"SELECT * FROM MyMeasurement WHERE (toto = 56 AND time < '2020-05-16T00:00:00.000000153Z' OR ('tutututu' = 12 AND 'aaa' = 'A') AND (value >= 323 AND computer = 'toto' AND ptio > (15 + 35.300))) ORDER BY time DESC",
+		"SELECT * FROM MyMeasurement WHERE (toto = 56 AND time < '2020-05-16T00:00:00.000000153Z' OR ('tutututu' = 12 AND 'aaa' = 'A') AND (value >= 323 AND computer = 'toto' AND ptio > (15 + 35.3))) ORDER BY time DESC",
 		false,
 	},
 	{
@@ -366,14 +366,14 @@ var testSamples = []struct {
 							GreaterThan(&Field{Name: "ptio"}, &Parenthesis{Expr: []interface{}{Add(int8(15), 35.3)}}),
 						}},
 				}}),
-		"SELECT * FROM MyMeasurement WHERE (toto = 56 AND time < '2020-05-16T00:00:00.000000153Z' OR ('tutututu' = 12 AND 'aaa' = 'A') AND (value >= 323 AND computer = 'toto' AND ptio > (15 + 35.300))) ORDER BY time DESC",
+		"SELECT * FROM MyMeasurement WHERE (toto = 56 AND time < '2020-05-16T00:00:00.000000153Z' OR ('tutututu' = 12 AND 'aaa' = 'A') AND (value >= 323 AND computer = 'toto' AND ptio > (15 + 35.3))) ORDER BY time DESC",
 		false,
 	},
 	{
 		"Select * where is string",
 		NewSelectBuilder().Select(NewWildcardField()).From("MyMeasurement").OrderBy("time", DESC).
-			Where(&MathExpr{Expr: "toto = 56 AND time < '2020-05-16T00:00:00.000000153Z' OR ('tutututu' = 12 AND 'aaa' = 'A') AND (value >= 323 AND computer = 'toto' AND ptio > (15 + 35.300))"}),
-		"SELECT * FROM MyMeasurement WHERE (toto = 56 AND time < '2020-05-16T00:00:00.000000153Z' OR ('tutututu' = 12 AND 'aaa' = 'A') AND (value >= 323 AND computer = 'toto' AND ptio > (15 + 35.300))) ORDER BY time DESC",
+			Where(&MathExpr{Expr: "toto = 56 AND time < '2020-05-16T00:00:00.000000153Z' OR ('tutututu' = 12 AND 'aaa' = 'A') AND (value >= 323 AND computer = 'toto' AND ptio > (15 + 35.3))"}),
+		"SELECT * FROM MyMeasurement WHERE (toto = 56 AND time < '2020-05-16T00:00:00.000000153Z' OR ('tutututu' = 12 AND 'aaa' = 'A') AND (value >= 323 AND computer = 'toto' AND ptio > (15 + 35.3))) ORDER BY time DESC",
 		false,
 	},
 	{
@@ -443,7 +443,7 @@ var testSamples = []struct {
 		"Select Divide, Subtract, multiply, modulus  Where noteq  ",
 		NewSelectBuilder().
 			Select(&Math{Expr: []interface{}{Add(Field{Name: "A"}, int64(32))}}).
-			AddSelect(&Math{Expr: []interface{}{Divide(Field{Name: "TU"}, float32(3.2))}}).
+			AddSelect(&Math{Expr: []interface{}{Divide(Field{Name: "TU"}, 3.3)}}).
 			AddSelect(&Math{Expr: []interface{}{Subtract(Field{Name: "MINUS"}, uint(32))}}).
 			AddSelect(&Math{Expr: []interface{}{Multiply(Field{Name: "MINUS"}, uint64(1))}}).
 			AddSelect(&Math{Expr: []interface{}{Modulus(Field{Name: "MINUS"}, uint8(1))}}).
@@ -452,14 +452,14 @@ var testSamples = []struct {
 				NotEq(Field{Name: "A"}, int16(165)),
 				LessThanEq(Field{Name: "time"}, time.Date(1970, 01, 01, 0, 0, 0, 0, time.UTC)),
 			))),
-		"SELECT (A + 32), (TU / 3.200), (MINUS - 32), (MINUS * 1), (MINUS % 1) FROM table2 WHERE (A != 165 OR time <= '1970-01-01T00:00:00Z')",
+		"SELECT (A + 32), (TU / 3.3), (MINUS - 32), (MINUS * 1), (MINUS % 1) FROM table2 WHERE (A != 165 OR time <= '1970-01-01T00:00:00Z')",
 		false,
 	},
 	{
 		"Select Divide, Subtract, multiply, modulus  Where noteq No math object ",
 		NewSelectBuilder().
 			Select(Add(Field{Name: "A"}, int64(32))).
-			AddSelect(Divide(Field{Name: "TU"}, float32(3.2))).
+			AddSelect(Divide(Field{Name: "TU"}, 3.3)).
 			AddSelect(Subtract(Field{Name: "MINUS"}, uint(32))).
 			AddSelect(Multiply(Field{Name: "MINUS"}, uint64(1))).
 			AddSelect(Modulus(Field{Name: "MINUS"}, uint8(1))).
@@ -469,7 +469,7 @@ var testSamples = []struct {
 					NotEq(NewField("A"), int16(165)),
 					LessThanEq(Field{Name: "time"}, time.Date(1970, 01, 01, 0, 0, 0, 0, time.UTC)),
 				)),
-		"SELECT (A + 32), (TU / 3.200), (MINUS - 32), (MINUS * 1), (MINUS % 1) FROM table2 WHERE (A != 165 OR time <= '1970-01-01T00:00:00Z')",
+		"SELECT (A + 32), (TU / 3.3), (MINUS - 32), (MINUS * 1), (MINUS % 1) FROM table2 WHERE (A != 165 OR time <= '1970-01-01T00:00:00Z')",
 		false,
 	},
 	{
