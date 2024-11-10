@@ -27,6 +27,21 @@ var testCreateDatabase = []struct {
 		"CREATE DATABASE DatabaseName WITH DURATION 1h0m0s REPLICATION 3 SHARD DURATION 2h0m0s",
 		false,
 	},
+	{
+		"Create database with future and past policy",
+		NewCreateDatabaseBuilder().
+			WithName("testdb").
+			WithRetentionPolicy(
+				NewCreateRetentionPolicyBuilder().
+					WithPolicyName("test_name").
+					WithDurationString("24h").
+					WithShardDurationString("10m").
+					WithReplicationFactor(2).
+					WithPastLimitString("67ms").
+					WithFutureLimitString("1h")),
+		"CREATE DATABASE testdb WITH DURATION 24h0m0s REPLICATION 2 SHARD DURATION 10m0s FUTURE LIMIT 1h PAST LIMIT 67ms NAME test_name",
+		false,
+	},
 }
 
 func TestCreateDatabaseBuilder(t *testing.T) {

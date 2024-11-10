@@ -18,6 +18,8 @@ func (b *CreateDatabaseBuilder) WithRetentionPolicy(retentionPolicy *CreateReten
 	b.dbStatement.RetentionPolicyDuration = &retentionPolicy.ret.Duration
 	b.dbStatement.RetentionPolicyReplication = &retentionPolicy.ret.Replication
 	b.dbStatement.RetentionPolicyShardGroupDuration = retentionPolicy.ret.ShardGroupDuration
+	b.dbStatement.FutureWriteLimit = &retentionPolicy.ret.FutureWriteLimit
+	b.dbStatement.PastWriteLimit = &retentionPolicy.ret.PastWriteLimit
 
 	return b
 }

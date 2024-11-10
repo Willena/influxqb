@@ -88,6 +88,18 @@ var testAlterRetentionPolicy = []struct {
 		"ALTER RETENTION POLICY \"PolicyName↔\" ON \"datab'ase\" DURATION 0s REPLICATION 36 SHARD DURATION 0s",
 		false,
 	},
+	{
+		"Alter with future and past limits",
+		NewAlterRetentionPolicyBuilder().
+			WithPolicyName("default").
+			WithDatabase("testdb").
+			WithDurationString("0s").
+			WithReplicationFactor(1).
+			WithFutureLimitString("55s").
+			WithPastLimitString("52m"),
+		"ALTER RETENTION POLICY \"default\" ON testdb DURATION 0s REPLICATION 1 FUTURE LIMIT 55s PAST LIMIT 52m",
+		false,
+	},
 }
 
 func TestAlterRetentionPolicyBuilder(t *testing.T) {

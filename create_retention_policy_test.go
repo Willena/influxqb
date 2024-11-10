@@ -88,6 +88,18 @@ var testCreateRetentionPolicy = []struct {
 		"CREATE RETENTION POLICY \"PolicyName↔\" ON \"datab'ase\" DURATION 0s REPLICATION 36",
 		false,
 	},
+	{
+		"Retention policy with future and past limit",
+		NewCreateRetentionPolicyBuilder().WithPolicyName("policy1").
+			WithDatabase("testdb").
+			WithDurationString("1h").
+			WithReplicationFactor(2).
+			WithShardDurationString("1s").
+			WithFutureLimitString("12h").
+			WithPastLimitString("3s"),
+		"CREATE RETENTION POLICY policy1 ON testdb DURATION 1h REPLICATION 2 SHARD DURATION 1s FUTURE LIMIT 12h PAST LIMIT 3s",
+		false,
+	},
 }
 
 func TestCreateRetentionPolicyBuilder(t *testing.T) {

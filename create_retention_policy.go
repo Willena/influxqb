@@ -45,6 +45,28 @@ func (b *CreateRetentionPolicyBuilder) WithReplicationFactor(replication int) *C
 	return b
 }
 
+func (b *CreateRetentionPolicyBuilder) WithFutureLimit(futureLimit time.Duration) *CreateRetentionPolicyBuilder {
+	b.ret.FutureWriteLimit = futureLimit
+	return b
+}
+
+func (b *CreateRetentionPolicyBuilder) WithFutureLimitString(futureLimit string) *CreateRetentionPolicyBuilder {
+	duration, _ := time.ParseDuration(futureLimit)
+	b.WithFutureLimit(duration)
+	return b
+}
+
+func (b *CreateRetentionPolicyBuilder) WithPastLimit(pastLimit time.Duration) *CreateRetentionPolicyBuilder {
+	b.ret.PastWriteLimit = pastLimit
+	return b
+}
+
+func (b *CreateRetentionPolicyBuilder) WithPastLimitString(pastLimitStr string) *CreateRetentionPolicyBuilder {
+	duration, _ := time.ParseDuration(pastLimitStr)
+	b.WithPastLimit(duration)
+	return b
+}
+
 func (b *CreateRetentionPolicyBuilder) SetAsDefault() *CreateRetentionPolicyBuilder {
 	b.ret.Default = true
 	return b

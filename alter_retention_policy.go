@@ -55,6 +55,30 @@ func (b *AlterRetentionPolicyBuilder) WithReplicationFactor(replication int) *Al
 	return b
 }
 
+func (b *AlterRetentionPolicyBuilder) WithFutureLimit(futureLimit *time.Duration) *AlterRetentionPolicyBuilder {
+	b.alterStm.FutureWriteLimit = futureLimit
+	return b
+}
+
+func (b *AlterRetentionPolicyBuilder) WithFutureLimitString(futureLimit string) *AlterRetentionPolicyBuilder {
+	duration := new(time.Duration)
+	*duration, _ = time.ParseDuration(futureLimit)
+	b.WithFutureLimit(duration)
+	return b
+}
+
+func (b *AlterRetentionPolicyBuilder) WithPastLimit(pastLimit *time.Duration) *AlterRetentionPolicyBuilder {
+	b.alterStm.PastWriteLimit = pastLimit
+	return b
+}
+
+func (b *AlterRetentionPolicyBuilder) WithPastLimitString(pastLimitStr string) *AlterRetentionPolicyBuilder {
+	duration := new(time.Duration)
+	*duration, _ = time.ParseDuration(pastLimitStr)
+	b.WithPastLimit(duration)
+	return b
+}
+
 func (b *AlterRetentionPolicyBuilder) SetAsDefault() *AlterRetentionPolicyBuilder {
 	b.alterStm.Default = true
 	return b
