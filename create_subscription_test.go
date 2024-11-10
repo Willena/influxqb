@@ -13,20 +13,32 @@ var testSubscription = []struct {
 	e bool
 }{
 	{"Create Subscription ALL single host",
-		NewCreateSubscriptionBuilder().WithName("Name").
-			WithDatabase("db").WithRetentionPolicy("policy").WithMode(ALL).WithDestination("host1"),
+		NewCreateSubscriptionBuilder().
+			WithName("Name").
+			WithDatabase("db").
+			WithRetentionPolicy("policy").
+			WithMode(ALL).
+			WithDestination("host1"),
 		"CREATE SUBSCRIPTION \"Name\" ON db.\"policy\" DESTINATIONS ALL 'host1'",
 		false,
 	},
 	{"Create Subscription ANY single host",
-		NewCreateSubscriptionBuilder().WithName("Name").
-			WithDatabase("db").WithRetentionPolicy("policy").WithMode(ANY).WithDestination("host1"),
+		NewCreateSubscriptionBuilder().
+			WithName("Name").
+			WithDatabase("db").
+			WithRetentionPolicy("policy").
+			WithMode(ANY).
+			WithDestination("host1"),
 		"CREATE SUBSCRIPTION \"Name\" ON db.\"policy\" DESTINATIONS ANY 'host1'",
 		false,
 	},
 	{"Create Subscription ANY multi host",
-		NewCreateSubscriptionBuilder().WithName("Name").
-			WithDatabase("db").WithRetentionPolicy("policy").WithMode(ANY).WithDestinations("host1", "host2"),
+		NewCreateSubscriptionBuilder().
+			WithName("Name").
+			WithDatabase("db").
+			WithRetentionPolicy("policy").
+			WithMode(ANY).
+			WithDestinations("host1", "host2"),
 		"CREATE SUBSCRIPTION \"Name\" ON db.\"policy\" DESTINATIONS ANY 'host1', 'host2'",
 		false,
 	},

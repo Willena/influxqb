@@ -189,7 +189,7 @@ var testSamples = []struct {
 		false,
 	},
 	{
-		"Select * with offset",
+		"Select * with limit",
 		NewSelectBuilder().Select(&Wildcard{}).
 			From("MyMeasurement").
 			Limit(125),

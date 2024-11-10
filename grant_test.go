@@ -19,22 +19,34 @@ var testGrantBuilder = []struct {
 	e bool
 }{
 	{"Grant Read on all for user",
-		NewGrantBuilder().WithUsername("Usr").WithPrivilege(influxql.ReadPrivilege).WithDatabase("db"),
+		NewGrantBuilder().
+			WithUsername("Usr").
+			WithPrivilege(influxql.ReadPrivilege).
+			WithDatabase("db"),
 		"GRANT READ ON db TO Usr",
 		false,
 	},
 	{"grant write on db for user",
-		NewGrantBuilder().WithUsername("Usr").WithPrivilege(influxql.WritePrivilege).WithDatabase("db"),
+		NewGrantBuilder().
+			WithUsername("Usr").
+			WithPrivilege(influxql.WritePrivilege).
+			WithDatabase("db"),
 		"GRANT WRITE ON db TO Usr",
 		false,
 	},
 	{"Grant All on db for user ",
-		NewGrantBuilder().WithUsername("Usr").WithPrivilege(influxql.AllPrivileges).WithDatabase("db"),
+		NewGrantBuilder().
+			WithUsername("Usr").
+			WithPrivilege(influxql.AllPrivileges).
+			WithDatabase("db"),
 		"GRANT ALL PRIVILEGES ON db TO Usr",
 		false,
 	},
 	{"Grant no privilege on db ",
-		NewGrantBuilder().WithUsername("Usr").WithPrivilege(influxql.NoPrivileges).WithDatabase("db"),
+		NewGrantBuilder().
+			WithUsername("Usr").
+			WithPrivilege(influxql.NoPrivileges).
+			WithDatabase("db"),
 		"GRANT NO PRIVILEGES ON db TO Usr",
 		false,
 	},

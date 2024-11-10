@@ -15,7 +15,10 @@ var testExplainBuilder = []struct {
 	{
 		"Explain select",
 		NewExplainBuilder().
-			WithSelectBuilder(NewSelectBuilder().Select("F1").From("Toto").Where(Eq(Field{Name: "totoField"}, 32))),
+			WithSelectBuilder(NewSelectBuilder().
+				Select("F1").
+				From("Toto").
+				Where(Eq(Field{Name: "totoField"}, 32))),
 		"EXPLAIN SELECT F1 FROM Toto WHERE (totoField = 32)",
 		false,
 	},

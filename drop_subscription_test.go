@@ -18,7 +18,10 @@ var testDropSubscriptionBuilder = []struct {
 	e bool
 }{
 	{"DROP continuous query named",
-		NewDropSubscription().WithName("Subscription").WithDatabase("database").WithRetentionPolicy("policy"),
+		NewDropSubscription().
+			WithName("Subscription").
+			WithDatabase("database").
+			WithRetentionPolicy("policy"),
 		"DROP SUBSCRIPTION \"Subscription\" ON \"database\".\"policy\"",
 		false,
 	},

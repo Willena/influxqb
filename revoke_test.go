@@ -19,22 +19,34 @@ var testRevokeBuilder = []struct {
 	e bool
 }{
 	{"Revoke Read on all for user",
-		NewRevokeBuilder().FromUsername("Usr").WithPrivilege(influxql.ReadPrivilege).OnDatabase("db"),
+		NewRevokeBuilder().
+			FromUsername("Usr").
+			WithPrivilege(influxql.ReadPrivilege).
+			OnDatabase("db"),
 		"REVOKE READ ON db FROM Usr",
 		false,
 	},
 	{"Revoke write on db for user",
-		NewRevokeBuilder().FromUsername("Usr").WithPrivilege(influxql.WritePrivilege).OnDatabase("db"),
+		NewRevokeBuilder().
+			FromUsername("Usr").
+			WithPrivilege(influxql.WritePrivilege).
+			OnDatabase("db"),
 		"REVOKE WRITE ON db FROM Usr",
 		false,
 	},
 	{"Revoke All on db for user ",
-		NewRevokeBuilder().FromUsername("Usr").WithPrivilege(influxql.AllPrivileges).OnDatabase("db"),
+		NewRevokeBuilder().
+			FromUsername("Usr").
+			WithPrivilege(influxql.AllPrivileges).
+			OnDatabase("db"),
 		"REVOKE ALL PRIVILEGES ON db FROM Usr",
 		false,
 	},
 	{"Revoke no privilege on db ",
-		NewRevokeBuilder().FromUsername("Usr").WithPrivilege(influxql.NoPrivileges).OnDatabase("db"),
+		NewRevokeBuilder().
+			FromUsername("Usr").
+			WithPrivilege(influxql.NoPrivileges).
+			OnDatabase("db"),
 		"REVOKE NO PRIVILEGES ON db FROM Usr",
 		false,
 	},

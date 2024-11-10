@@ -20,12 +20,18 @@ var testDropSeriesBuilder = []struct {
 	e bool
 }{
 	{"Drop Series from ",
-		NewDropSeries().From(NewMeasurement().Name("M")),
+		NewDropSeries().
+			From(NewMeasurement().Name("M")),
 		"DROP SERIES FROM M",
 		false,
 	},
 	{"Drop Series from ",
-		NewDropSeries().From(NewMeasurement().Name("M").WithDatabase("db").WithPolicy("policy1")),
+		NewDropSeries().From(
+			NewMeasurement().
+				Name("M").
+				WithDatabase("db").
+				WithPolicy("policy1"),
+		),
 		"DROP SERIES FROM db.policy1.M",
 		false,
 	},

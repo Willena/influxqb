@@ -13,12 +13,17 @@ var testCreateUser = []struct {
 	e bool
 }{
 	{"Create User non Admin",
-		NewCreateUserBuilder().WithUsername("UserName").WithPassword("password!&é!$^ù"),
+		NewCreateUserBuilder().
+			WithUsername("UserName").
+			WithPassword("password!&é!$^ù"),
 		"CREATE USER UserName WITH PASSWORD 'password!&é!$^ù'",
 		false,
 	},
 	{"Create User Admin",
-		NewCreateUserBuilder().WithUsername("UserName").WithPassword("password!&é!$^ù").Admin(),
+		NewCreateUserBuilder().
+			WithUsername("UserName").
+			WithPassword("password!&é!$^ù").
+			Admin(),
 		"CREATE USER UserName WITH PASSWORD 'password!&é!$^ù' WITH ALL PRIVILEGES",
 		false,
 	},
