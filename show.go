@@ -1,8 +1,9 @@
 package influxqb
 
 import (
-	"github.com/influxdata/influxql"
 	"regexp"
+
+	"github.com/influxdata/influxql"
 )
 
 type ShowContinuousQueries struct{}
@@ -109,13 +110,13 @@ func (b *ShowFieldKeyCardinality) GroupBy(fields ...GroupByIf) *ShowFieldKeyCard
 }
 
 func (b *ShowFieldKeyCardinality) Where(condition interface{}) *ShowFieldKeyCardinality {
-	switch condition.(type) {
+	switch condition := condition.(type) {
 	case influxql.Expr:
-		b.q.Condition = &influxql.ParenExpr{Expr: condition.(influxql.Expr)}
-		break
+		b.q.Condition = &influxql.ParenExpr{Expr: condition}
+
 	case MathExprIf:
-		b.q.Condition = condition.(MathExprIf).expr()
-		break
+		b.q.Condition = condition.expr()
+
 	}
 	return b
 }
@@ -208,13 +209,11 @@ func (b *ShowMeasurementCardinality) GroupBy(fields ...GroupByIf) *ShowMeasureme
 }
 
 func (b *ShowMeasurementCardinality) Where(condition interface{}) *ShowMeasurementCardinality {
-	switch condition.(type) {
+	switch condition := condition.(type) {
 	case influxql.Expr:
-		b.q.Condition = &influxql.ParenExpr{Expr: condition.(influxql.Expr)}
-		break
+		b.q.Condition = &influxql.ParenExpr{Expr: condition}
 	case MathExprIf:
-		b.q.Condition = condition.(MathExprIf).expr()
-		break
+		b.q.Condition = condition.expr()
 	}
 	return b
 }
@@ -238,13 +237,11 @@ func (b *ShowMeasurements) WithMeasurement(regexp *regexp.Regexp) *ShowMeasureme
 }
 
 func (b *ShowMeasurements) Where(condition interface{}) *ShowMeasurements {
-	switch condition.(type) {
+	switch condition := condition.(type) {
 	case influxql.Expr:
-		b.q.Condition = &influxql.ParenExpr{Expr: condition.(influxql.Expr)}
-		break
+		b.q.Condition = &influxql.ParenExpr{Expr: condition}
 	case MathExprIf:
-		b.q.Condition = condition.(MathExprIf).expr()
-		break
+		b.q.Condition = condition.expr()
 	}
 	return b
 }
@@ -294,13 +291,11 @@ func (b *ShowSeries) WithMeasurement(sources ...*Measurement) *ShowSeries {
 }
 
 func (b *ShowSeries) Where(condition interface{}) *ShowSeries {
-	switch condition.(type) {
+	switch condition := condition.(type) {
 	case influxql.Expr:
-		b.q.Condition = &influxql.ParenExpr{Expr: condition.(influxql.Expr)}
-		break
+		b.q.Condition = &influxql.ParenExpr{Expr: condition}
 	case MathExprIf:
-		b.q.Condition = condition.(MathExprIf).expr()
-		break
+		b.q.Condition = condition.expr()
 	}
 	return b
 }
@@ -341,13 +336,11 @@ func (b *ShowSeriesCadinality) From(measuremnts ...*Measurement) *ShowSeriesCadi
 }
 
 func (b *ShowSeriesCadinality) Where(condition interface{}) *ShowSeriesCadinality {
-	switch condition.(type) {
+	switch condition := condition.(type) {
 	case influxql.Expr:
-		b.q.Condition = &influxql.ParenExpr{Expr: condition.(influxql.Expr)}
-		break
+		b.q.Condition = &influxql.ParenExpr{Expr: condition}
 	case MathExprIf:
-		b.q.Condition = condition.(MathExprIf).expr()
-		break
+		b.q.Condition = condition.expr()
 	}
 	return b
 }
@@ -433,13 +426,11 @@ func (b *ShowTagKeyCardinality) GroupBy(fields ...GroupByIf) *ShowTagKeyCardinal
 }
 
 func (b *ShowTagKeyCardinality) Where(condition interface{}) *ShowTagKeyCardinality {
-	switch condition.(type) {
+	switch condition := condition.(type) {
 	case influxql.Expr:
-		b.q.Condition = &influxql.ParenExpr{Expr: condition.(influxql.Expr)}
-		break
+		b.q.Condition = &influxql.ParenExpr{Expr: condition}
 	case MathExprIf:
-		b.q.Condition = condition.(MathExprIf).expr()
-		break
+		b.q.Condition = condition.expr()
 	}
 	return b
 }
@@ -485,13 +476,11 @@ func (b *ShowTagKeys) From(sources ...*Measurement) *ShowTagKeys {
 }
 
 func (b *ShowTagKeys) Where(condition interface{}) *ShowTagKeys {
-	switch condition.(type) {
+	switch condition := condition.(type) {
 	case influxql.Expr:
-		b.q.Condition = &influxql.ParenExpr{Expr: condition.(influxql.Expr)}
-		break
+		b.q.Condition = &influxql.ParenExpr{Expr: condition}
 	case MathExprIf:
-		b.q.Condition = condition.(MathExprIf).expr()
-		break
+		b.q.Condition = condition.expr()
 	}
 	return b
 }
@@ -527,18 +516,16 @@ func (b *ShowTagValues) From(sources ...*Measurement) *ShowTagValues {
 }
 
 func (b *ShowTagValues) Where(condition interface{}) *ShowTagValues {
-	switch condition.(type) {
+	switch condition := condition.(type) {
 	case influxql.Expr:
-		b.q.Condition = &influxql.ParenExpr{Expr: condition.(influxql.Expr)}
-		break
+		b.q.Condition = &influxql.ParenExpr{Expr: condition}
 	case MathExprIf:
-		b.q.Condition = condition.(MathExprIf).expr()
-		break
+		b.q.Condition = condition.expr()
 	}
 	return b
 }
 
-//TODO : Rewrite with custom objects
+// TODO : Rewrite with custom objects
 func (b *ShowTagValues) WithTagKey(operator influxql.Token, tagKey influxql.Literal) *ShowTagValues {
 	b.q.Op = operator
 	b.q.TagKeyExpr = tagKey
@@ -596,13 +583,11 @@ func (b *ShowTagValuesCardinality) GroupBy(fields ...GroupByIf) *ShowTagValuesCa
 }
 
 func (b *ShowTagValuesCardinality) Where(condition interface{}) *ShowTagValuesCardinality {
-	switch condition.(type) {
+	switch condition := condition.(type) {
 	case influxql.Expr:
-		b.q.Condition = &influxql.ParenExpr{Expr: condition.(influxql.Expr)}
-		break
+		b.q.Condition = &influxql.ParenExpr{Expr: condition}
 	case MathExprIf:
-		b.q.Condition = condition.(MathExprIf).expr()
-		break
+		b.q.Condition = condition.expr()
 	}
 	return b
 }

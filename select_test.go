@@ -2,14 +2,15 @@ package influxqb
 
 import (
 	"fmt"
-	"github.com/influxdata/influxql"
-	"github.com/stretchr/testify/assert"
 	"regexp"
 	"testing"
 	"time"
+
+	"github.com/influxdata/influxql"
+	"github.com/stretchr/testify/assert"
 )
 
-var tz, err = time.LoadLocation("Europe/Paris")
+var tz, _ = time.LoadLocation("Europe/Paris")
 
 var testSamples = []struct {
 	d string
@@ -479,6 +480,12 @@ var testSamples = []struct {
 			From("table2").
 			Into(NewMeasurement().WithDatabase("MyDB").WithPolicy("RP").Name("Measurement")),
 		"SELECT A INTO MyDB.RP.\"Measurement\" FROM table2",
+		false,
+	},
+	{
+		"Select from db.rp.name",
+		NewSelectBuilder().Select(NewWildcardField()).FromMeasurements(NewMeasurement().Name("metricName").WithDatabase("db").WithPolicy("polName")),
+		"SELECT * FROM db.polName.metricName",
 		false,
 	},
 }

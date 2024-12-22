@@ -1,8 +1,9 @@
 package influxqb
 
 import (
-	"github.com/influxdata/influxql"
 	"regexp"
+
+	"github.com/influxdata/influxql"
 )
 
 type DeleteBuilder struct {
@@ -15,13 +16,11 @@ func (b *DeleteBuilder) From(source string) *DeleteBuilder {
 }
 
 func (b *DeleteBuilder) Where(condition interface{}) *DeleteBuilder {
-	switch condition.(type) {
+	switch condition := condition.(type) {
 	case influxql.Expr:
-		b.del.Condition = &influxql.ParenExpr{Expr: condition.(influxql.Expr)}
-		break
+		b.del.Condition = &influxql.ParenExpr{Expr: condition}
 	case MathExprIf:
-		b.del.Condition = condition.(MathExprIf).expr()
-		break
+		b.del.Condition = condition.expr()
 	}
 	return b
 }

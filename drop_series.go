@@ -16,13 +16,11 @@ func (b *DropSeriesBuilder) From(sources ...*Measurement) *DropSeriesBuilder {
 }
 
 func (b *DropSeriesBuilder) Where(condition interface{}) *DropSeriesBuilder {
-	switch condition.(type) {
+	switch condition := condition.(type) {
 	case influxql.Expr:
-		b.dss.Condition = &influxql.ParenExpr{Expr: condition.(influxql.Expr)}
-		break
+		b.dss.Condition = &influxql.ParenExpr{Expr: condition}
 	case MathExprIf:
-		b.dss.Condition = condition.(MathExprIf).expr()
-		break
+		b.dss.Condition = condition.expr()
 	}
 	return b
 }

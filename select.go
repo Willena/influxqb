@@ -2,10 +2,11 @@ package influxqb
 
 import (
 	"fmt"
-	"github.com/influxdata/influxql"
 	"regexp"
 	"strconv"
 	"time"
+
+	"github.com/influxdata/influxql"
 )
 
 type Order bool
@@ -167,67 +168,62 @@ func (f *Function) field() *influxql.Field {
 }
 
 func toExpr(a interface{}) influxql.Expr {
-	switch a.(type) {
+	switch a := a.(type) {
 	case int:
-		intval := int64(a.(int))
+		intval := int64(a)
 		return &influxql.IntegerLiteral{Val: intval}
 	case int8:
-		intval := int64(a.(int8))
+		intval := int64(a)
 		return &influxql.IntegerLiteral{Val: intval}
 	case int16:
-		intval := int64(a.(int16))
+		intval := int64(a)
 		return &influxql.IntegerLiteral{Val: intval}
 	case int32:
-		intval := int64(a.(int32))
+		intval := int64(a)
 		return &influxql.IntegerLiteral{Val: intval}
 	case int64:
-		intval := a.(int64)
+		intval := a
 		return &influxql.IntegerLiteral{Val: intval}
 	case uint:
-		uintval := int64(a.(uint))
+		uintval := int64(a)
 		return &influxql.IntegerLiteral{Val: uintval}
 	case uint8:
-		intval := int64(a.(uint8))
+		intval := int64(a)
 		return &influxql.IntegerLiteral{Val: intval}
 	case uint16:
-		intval := int64(a.(uint16))
+		intval := int64(a)
 		return &influxql.IntegerLiteral{Val: intval}
 	case uint32:
-		intval := int64(a.(uint32))
+		intval := int64(a)
 		return &influxql.IntegerLiteral{Val: intval}
 	case uint64:
-		intval := int64(a.(uint64))
+		intval := int64(a)
 		return &influxql.IntegerLiteral{Val: intval}
 	case float32:
-		floatval := float64(a.(float32))
+		floatval := float64(a)
 		return &influxql.NumberLiteral{Val: floatval}
 	case float64:
-		floatval := a.(float64)
-		return &influxql.NumberLiteral{Val: floatval}
+		return &influxql.NumberLiteral{Val: a}
 	case string:
-		return &influxql.StringLiteral{Val: a.(string)}
+		return &influxql.StringLiteral{Val: a}
 	case time.Time:
-		return &influxql.TimeLiteral{Val: a.(time.Time)}
+		return &influxql.TimeLiteral{Val: a}
 	case *time.Time:
-		tmp := *a.(*time.Time)
-		return &influxql.TimeLiteral{Val: tmp}
+		return &influxql.TimeLiteral{Val: *a}
 	case time.Duration:
-		return &influxql.DurationLiteral{Val: a.(time.Duration)}
+		return &influxql.DurationLiteral{Val: a}
 	case *Field:
-		f := a.(*Field)
-		return &influxql.VarRef{Val: f.Name, Type: f.Type}
+		return &influxql.VarRef{Val: a.Name, Type: a.Type}
 	case Field:
-		field := a.(Field)
-		return &influxql.VarRef{Val: field.Name, Type: field.Type}
+		return &influxql.VarRef{Val: a.Name, Type: a.Type}
 	case *Parenthesis:
-		t := a.(*Parenthesis).compute()
+		t := a.compute()
 		return t
 	case influxql.Expr:
-		return a.(influxql.Expr)
+		return a
 	default:
 		return nil
 	}
-
 }
 
 type Parenthesis struct {
@@ -240,15 +236,14 @@ func (p *Parenthesis) findParenthesis() (int, int, *influxql.ParenExpr) {
 	//lastClose := - 1
 	for i, v := range p.Expr {
 		//fmt.Print(v)
-		switch v.(type) {
+		switch v := v.(type) {
 		case influxql.Token:
-			token := v.(influxql.Token)
-			if token == influxql.LPAREN {
+			if v == influxql.LPAREN {
 				if firtOpen == -1 {
 					firtOpen = i
 				}
 				parenOpened++
-			} else if token == influxql.RPAREN {
+			} else if v == influxql.RPAREN {
 				parenOpened--
 				if parenOpened < 0 {
 					fmt.Println("Math expression not valid")
@@ -260,8 +255,7 @@ func (p *Parenthesis) findParenthesis() (int, int, *influxql.ParenExpr) {
 				}
 			}
 		case *Parenthesis:
-			p2 := v.(*Parenthesis)
-			return i, i, p2.compute()
+			return i, i, v.compute()
 		}
 
 	}
@@ -273,9 +267,9 @@ func (p *Parenthesis) findParenthesis() (int, int, *influxql.ParenExpr) {
 func (p *Parenthesis) findLevelOps(level int) (int, int, *influxql.BinaryExpr) {
 
 	for i, v := range p.Expr {
-		switch v.(type) {
+		switch v := v.(type) {
 		case influxql.Token:
-			token := v.(influxql.Token)
+			token := v
 			if token.Precedence() == level {
 
 				LHS := toExpr(p.Expr[i-1])
@@ -415,31 +409,24 @@ func (q *SelectBuilder) AddSelect(fields ...interface{}) *SelectBuilder {
 
 func (q *SelectBuilder) Select(fields ...interface{}) *SelectBuilder {
 	for _, f := range fields {
-		switch f.(type) {
+		switch f := f.(type) {
 		case influxql.Expr:
-			d := f.(influxql.Expr)
-			q.selectStatement.Fields = append(q.selectStatement.Fields, &influxql.Field{Expr: &influxql.ParenExpr{Expr: d}})
-			break
+			q.selectStatement.Fields = append(q.selectStatement.Fields, &influxql.Field{Expr: &influxql.ParenExpr{Expr: f}})
 		case FieldIf:
-			final := f.(FieldIf)
-			if finalField := final.field(); finalField != nil {
+
+			if finalField := f.field(); finalField != nil {
 				q.selectStatement.Fields = append(q.selectStatement.Fields, finalField)
 			}
-			break
 		case *regexp.Regexp:
-			final := f.(*regexp.Regexp)
-			q.selectStatement.Fields = append(q.selectStatement.Fields, &influxql.Field{Expr: &influxql.RegexLiteral{Val: final}})
-			break
+			q.selectStatement.Fields = append(q.selectStatement.Fields, &influxql.Field{Expr: &influxql.RegexLiteral{Val: f}})
 		case string:
-			if f.(string) == "*" {
+			if f == "*" {
 				f2 := &Wildcard{}
 				q.selectStatement.Fields = append(q.selectStatement.Fields, f2.field())
 			} else {
-				f2 := &Field{Name: f.(string)}
+				f2 := &Field{Name: f}
 				q.selectStatement.Fields = append(q.selectStatement.Fields, f2.field())
 			}
-
-			break
 		}
 	}
 	return q
@@ -464,9 +451,14 @@ func (q *SelectBuilder) AddFrom(fields ...string) *SelectBuilder {
 
 func (q *SelectBuilder) From(sources ...string) *SelectBuilder {
 	for _, v := range sources {
-		q.selectStatement.Sources = append(q.selectStatement.Sources, &influxql.Measurement{
-			Name: v,
-		})
+		q.FromMeasurements(NewMeasurement().Name(v))
+	}
+	return q
+}
+
+func (q *SelectBuilder) FromMeasurements(sources ...*Measurement) *SelectBuilder {
+	for _, v := range sources {
+		q.selectStatement.Sources = append(q.selectStatement.Sources, v.m)
 	}
 	return q
 }
@@ -495,21 +487,18 @@ func (q *SelectBuilder) FromRegex(regexes ...*regexp.Regexp) *SelectBuilder {
 
 func (q *SelectBuilder) Fill(fillOption interface{}) *SelectBuilder {
 
-	switch fillOption.(type) {
+	switch fillOption := fillOption.(type) {
 	case string:
-		fillValue := FillFromStr(fillOption.(string))
+		fillValue := FillFromStr(fillOption)
 		q.Fill(fillValue)
-		break
 	case FillOption:
-		option, value := fillOption.(FillOption).get()
+		option, value := fillOption.get()
 		q.selectStatement.Fill = option
 		q.selectStatement.FillValue = value
-		break
 	case int:
-		q.Fill(FillNumber{Value: float64(fillOption.(int))})
-		break
+		q.Fill(FillNumber{Value: float64(fillOption)})
 	case float64:
-		q.Fill(FillNumber{Value: fillOption.(float64)})
+		q.Fill(FillNumber{Value: fillOption})
 	default:
 		q.Fill(FillNoFill{})
 	}
@@ -538,13 +527,11 @@ func (q *SelectBuilder) Offset(offset int) *SelectBuilder {
 }
 
 func (q *SelectBuilder) Where(expr interface{}) *SelectBuilder {
-	switch expr.(type) {
+	switch expr := expr.(type) {
 	case influxql.Expr:
-		q.selectStatement.Condition = &influxql.ParenExpr{Expr: expr.(influxql.Expr)}
-		break
+		q.selectStatement.Condition = &influxql.ParenExpr{Expr: expr}
 	case MathExprIf:
-		q.selectStatement.Condition = expr.(MathExprIf).expr()
-		break
+		q.selectStatement.Condition = expr.expr()
 	}
 	return q
 }
@@ -556,12 +543,11 @@ func (q *SelectBuilder) Build() (string, error) {
 func (q *SelectBuilder) WithTimeZone(timeZone interface{}) *SelectBuilder {
 
 	var tz *time.Location
-	switch timeZone.(type) {
+	switch timeZone := timeZone.(type) {
 	case *time.Location:
-		tz = timeZone.(*time.Location)
-		break
+		tz = timeZone
 	case string:
-		tz, _ = time.LoadLocation(timeZone.(string))
+		tz, _ = time.LoadLocation(timeZone)
 	}
 
 	q.selectStatement.Location = tz
@@ -631,7 +617,6 @@ func NotEq(LH interface{}, RH interface{}) *influxql.BinaryExpr {
 }
 
 func FillFromStr(str string) FillOption {
-
 	switch str {
 	case "none":
 		return FillNoFill{}
