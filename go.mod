@@ -3,7 +3,7 @@ module github.com/willena/influxqb
 go 1.22
 
 require (
-	github.com/influxdata/influxql v1.4.0
+	github.com/influxdata/influxql v1.4.1
 	github.com/stretchr/testify v1.10.0
 )
 
