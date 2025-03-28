@@ -16,7 +16,7 @@ var testCreateContinuousQueryBuilder = []struct {
 		"Simple Continuous Query ",
 		NewCreateContinuousQueryBuilder().WithName("ContinuousQuery").WithDatabase("db").
 			WithResamplingIntervalFromString("12h").WithTimeoutString("1h"),
-		"CREATE CONTINUOUS QUERY ContinuousQuery ON db RESAMPLE EVERY 12h FOR 1h BEGIN SELECT  END",
+		"CREATE CONTINUOUS QUERY ContinuousQuery ON db RESAMPLE EVERY 12h FOR 1h BEGIN  END",
 		false,
 	},
 	{
